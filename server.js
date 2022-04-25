@@ -115,11 +115,13 @@ app.use( (req, res, next) => {
       }
       // end of methods
 
-    if(args.log) {
-        const WRITESTREAM = fs.createWriteStream('access.log', { flags: 'a' })
-        // Set up the access logging middleware
-        app.use(morgan('accesslog', { stream: WRITESTREAM }))
-    }
+    if (!args.log){
+        console.log("Error")
+      }
+      else{
+        const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
+        app.use(morgan('accesslog', {steam: WRITESTREAM}))
+      }
 
     if (args.debug){
         app.get('/app/log/access', (req,res) => {
