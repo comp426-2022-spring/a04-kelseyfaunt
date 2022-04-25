@@ -142,24 +142,31 @@ app.get('/app/', (req, res, next) => {
  })
 
 app.get('/app/flip/', (req, res) => {
-        const flip = {"flip": coinFlip()};
-        res.json(flip);
+        res.statusCode = 200;
+        let flip = coinFlip();
+        res.json({"flip": flip});
+        res.writeHead( res.statusCode, { 'Content-Type' : 'application/json' });  
 })
 
 app.get('/app/flips/:number', (req, res) => {
+    res.statusCode = 200;
     const flips = coinFlips(req.params.number);
     const count = countFlips(flips);
-    res.json({"raw": flips, "summary": count});
+    res.status(200).json({"raw": flips, "summary": count});
 })
 
 app.get('/app/flip/call/heads', (req, res) => {
-    const temp = flipACoin('heads');
-    res.json(record);
+    res.statusCode = 200;
+    let result = flipACoin('heads');
+    res.send(result);
+    res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });  
 })
 
 app.get('/app/flip/call/tails', (req, res) => {
-    const temp = flipACoin('tails');
-    res.json(record);
+    res.statusCode = 200;
+    let result = flipACoin('tails');
+    res.send(result);
+    res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });  
 })
 
 app.use(function(req, res){
