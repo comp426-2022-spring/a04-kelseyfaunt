@@ -8,22 +8,9 @@ let row = stmt.get();
 if(row == undefined) {
     console.log('Your database appears to be empty. I will initialize it now.');
 
-    const logdata = `CREATE TABLE accesslog (
-        id INTEGER PRIMARY KEY,
-        remoteaddr TEXT,
-        remoteuser TEXT,
-        time TEXT,
-        method TEXT,
-        url TEXT,
-        protocol TEXT,
-        httpversion TEXT,
-        status TEXT,
-        referrer TEXT,
-        useragent TEXT
-    );
-    `
-
-    logdb.exec(logdata)
+     const sqlInit = `
+    CREATE TABLE accesslog (id INTEGER PRIMARY KEY, remoteaddr VARCHAR, remoteuser VARCHAR, time VARCHAR, method VARCHAR, url TEXT, protocol TEXT, httpversion TEXT, status TEXT, referrer TEXT, useragent TEXT );`
+    logdb.exec(sqlInit)
 } else {
     console.log('Database exists')
 }
