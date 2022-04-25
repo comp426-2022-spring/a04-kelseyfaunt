@@ -117,8 +117,8 @@ app.use( (req, res, next) => {
       // end of methods
 
 if (args.log){
-   const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
-   app.use(morgan('accesslog', {steam: WRITESTREAM}))
+   const WRITESTREAM = fs.createWriteStream('FILE', {flags : 'a'})
+   app.use(morgan('FORMAT', {steam: WRITESTREAM}))
    }
 
 if (args.debug == true) {
