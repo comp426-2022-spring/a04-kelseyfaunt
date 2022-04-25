@@ -30,7 +30,7 @@ const port = args.port || process.env.PORT || 5000
 
 const express = require('express');
 const app = express();
-const db = require('./database')
+const logdb = require('./database')
 const fs = require('fs')
 const morgan = require('morgan')
 
@@ -63,14 +63,14 @@ app.use( (req, res, next) => {
         useragent: req.headers['user-agent']
     }
 
- const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url,  protocol, httpversion, secure, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+ const stmt = logdb.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url,  protocol, httpversion, secure, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
  const info = stmt.run(logdata.remoteaddr.toString(), logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.secure, logdata.status, logdata.referer, logdata.useragent)
  next();
  });
 if (args.debug == true) {
     app.get('/app/log/access', (req, res) => {
         try {
-            const stmt = db.prepare('SELECT * FROM accesslog').all()
+            const stmt = logdb.prepare('SELECT * FROM accesslog').all()
             res.status(200).json(stmt)
             } catch {
               console.error(e)
