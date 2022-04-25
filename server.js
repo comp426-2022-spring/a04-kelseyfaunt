@@ -56,10 +56,10 @@ app.use( (req, res, next) => {
         useragent: req.headers['user-agent']
     }
 
- const stmt = db.prepare('INSERT INTO  accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
- const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referrer, logdata.useragent)
+ const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url,  protocol, httpversion, secure, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+ const info = stmt.run(logdata.remoteaddr.toString(), logdata.remoteuser, logdata.time, logdata.method.toString(), logdata.url.toString(), logdata.protocol.toString(), logdata.httpversion.toString(), logdata.secure.toString(), logdata.status.toString(), logdata.referer, logdata.useragent.toString())
  next();
- })
+ });
 
     //methods
     function coinFlip() {
@@ -121,20 +121,24 @@ if (args.log){
    app.use(morgan('accesslog', {steam: WRITESTREAM}))
    }
 
-if (args.debug){
-   app.get('/app/log/access', (req,res) => {
+if (args.debug == true) {
+    app.get('/app/log/access', (req, res) => {
+        try {
             const stmt = db.prepare('SELECT * FROM accesslog').all()
-            res.statusCode = 200
-            res.json(stmt)
-   });
-        
-   app.get('/app/error', (req,res) => {
-            throw new Error('Error test successful.');
-   });
+            res.status(200).json(stmt)
+            } catch(e) {
+              console.error(e)
+            }
+    })
+
+    app.get('/app/error', (req, res) => {
+        res.status(500);
+        throw new Error('Error test successful.');
+    })
 }
 
 
-app.get('/app/', (req, res, next) => {
+app.get('/app/', (req, res) => {
         res.statusCode = 200;
         res.statusMessage = 'OK';
         res.writeHead( res.statusCode, { 'Content-Type' : 'text/plain' });
