@@ -116,7 +116,7 @@ app.use( (req, res, next) => {
       }
       // end of methods
 
-if (args.log){
+if (args.log == true){
    const WRITESTREAM = fs.createWriteStream('FILE', {flags : 'a'})
    app.use(morgan('FORMAT', {steam: WRITESTREAM}))
    }
