@@ -30,7 +30,7 @@ const port = args.port || process.env.PORT || 5000
 
 const express = require('express');
 const app = express();
-const db = require('./database.js')
+const db = require('./database')
 const fs = require('fs')
 const morgan = require('morgan')
 
@@ -42,6 +42,11 @@ app.use(express.json());
 const server = app.listen(port, () => {
     console.log('App listening on port %PORT%'.replace('%PORT%',port))
 });
+
+if (args.log == true){
+   const accesslog = fs.createWriteStream('access.log', {flags : 'a'})
+   app.use(morgan('combined', {steam: accesslog}))
+   }
 
 app.use( (req, res, next) => {
     // Your middleware goes here.
@@ -62,6 +67,21 @@ app.use( (req, res, next) => {
  const info = stmt.run(logdata.remoteaddr.toString(), logdata.remoteuser, logdata.time, logdata.method.toString(), logdata.url.toString(), logdata.protocol.toString(), logdata.httpversion.toString(), logdata.secure.toString(), logdata.status.toString(), logdata.referer, logdata.useragent.toString())
  next();
  });
+if (args.debug == true) {
+    app.get('/app/log/access', (req, res) => {
+        try {
+            const stmt = db.prepare('SELECT * FROM accesslog').all()
+            res.status(200).json(stmt)
+            } catch(e) {
+              console.error(e)
+            }
+    })
+
+    app.get('/app/error', (req, res) => {
+        res.status(500);
+        throw new Error('Error test successful.');
+    })
+}
 
     //methods
     function coinFlip() {
@@ -117,27 +137,6 @@ app.use( (req, res, next) => {
         return final;
       }
       // end of methods
-
-if (args.log == true){
-   const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
-   app.use(morgan('combined', {steam: WRITESTREAM}))
-   }
-
-if (args.debug == true) {
-    app.get('/app/log/access', (req, res) => {
-        try {
-            const stmt = db.prepare('SELECT * FROM accesslog').all()
-            res.status(200).json(stmt)
-            } catch(e) {
-              console.error(e)
-            }
-    })
-
-    app.get('/app/error', (req, res) => {
-        res.status(500);
-        throw new Error('Error test successful.');
-    })
-}
 
 
 app.get('/app/', (req, res) => {
