@@ -1,7 +1,8 @@
 
 const args = require('minimist')(process.argv.slice(2))
-
-console.log(args)
+args["port"]
+const port = args.port || process.env.PORT || 5555
+// console.log(args)
 
 const help = (`
 server.js [options]
@@ -31,7 +32,7 @@ const db = require('./database.js')
 const fs = require('fs')
 const morgan = require('morgan')
 
-const port = args.port || process.env.PORT || 5555
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -115,25 +116,22 @@ app.use( (req, res, next) => {
       }
       // end of methods
 
-    if (!args.log){
-        console.log("Error")
-      }
-      else{
-        const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
-        app.use(morgan('accesslog', {steam: WRITESTREAM}))
-      }
+if (args.log){
+   const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
+   app.use(morgan('accesslog', {steam: WRITESTREAM}))
+   }
 
-    if (args.debug){
-        app.get('/app/log/access', (req,res) => {
+if (args.debug){
+   app.get('/app/log/access', (req,res) => {
             const stmt = db.prepare('SELECT * FROM accesslog').all()
             res.statusCode = 200
             res.json(stmt)
-        });
+   });
         
-        app.get('/app/error', (req,res) => {
-            throw new Error('Error test successful')
-        });
-      }
+   app.get('/app/error', (req,res) => {
+            throw new Error('Error test successful.');
+   });
+}
 
 
 app.get('/app/', (req, res, next) => {
