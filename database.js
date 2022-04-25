@@ -5,7 +5,7 @@ const stmt = logdb.prepare(`SELECT name FROM sqlite_master WHERE type='table' an
 );
 
 let row = stmt.get();
-if(row == undefinded) {
+if(row == undefined) {
     console.log('Your database appears to be empty. I will initialize it now.');
 
     const logdata = `CREATE TABLE accesslog (
