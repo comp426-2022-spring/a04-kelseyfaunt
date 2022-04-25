@@ -1,7 +1,6 @@
 
 const args = require('minimist')(process.argv.slice(2))
-args["port"]
-const port = args.port || process.env.PORT || 5000
+
 // console.log(args)
 
 const help = (`
@@ -25,6 +24,9 @@ if (args.help || args.h) {
     console.log(help)
     process.exit(0)
 }
+
+args['port', 'debug', 'log', 'help'];
+const port = args.port || process.env.PORT || 5000
 
 const express = require('express');
 const app = express();
@@ -118,7 +120,7 @@ app.use( (req, res, next) => {
 
 if (args.log == true){
    const WRITESTREAM = fs.createWriteStream('access.log', {flags : 'a'})
-   app.use(morgan('accesslog', {steam: WRITESTREAM}))
+   app.use(morgan('combined', {steam: WRITESTREAM}))
    }
 
 if (args.debug == true) {
